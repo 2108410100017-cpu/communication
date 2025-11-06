@@ -8,9 +8,7 @@
             margin: 20px;
             background: #f9f9f9;
         }
-        h1 {
-            color: #333;
-        }
+        h1 { color: #333; }
         .product {
             background: white;
             border-radius: 10px;
@@ -32,56 +30,61 @@
             display: block;
         }
         hr { border: 0; height: 1px; background: #ddd; margin: 15px 0; }
-        pre {
-            background: #f0f0f0;
-            padding: 10px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
     </style>
 </head>
 <body>
     <h1>📦 Received Products</h1>
 
-    {% if products %}
+    {% if products and products|length > 0 %}
         {% for p in products %}
         <div class="product">
-            <p><strong>Model:</strong> {{ p.Model }}</p>
-            <p><strong>Brand:</strong> {{ p.Brand }}</p>
-            <p><strong>Size:</strong> 
-                Length={{ p.Size.Length }}, 
-                Width={{ p.Size.Width }}, 
-                Height={{ p.Size.Height }}
-            </p>
+            <p><strong>Model:</strong> {{ p["Model"] }}</p>
+            <p><strong>Brand:</strong> {{ p["Brand"] }}</p>
 
-            {% if p.FolderData %}
-                <p><strong>Folder:</strong> {{ p.FolderData.folder_name }}</p>
-                <ul id="folder-{{ loop.index }}">
-                    {% for subfolder, files in p.FolderData.files.items() %}
-                        <li>
-                            <span class="folder" onclick="toggleFiles(this)">
-                                📁 {{ subfolder if subfolder else '[root]' }}
-                            </span>
-                            <ul class="files">
-                                {% for f in files %}
-                                    <li>🖼️ {{ f }}</li>
-                                {% endfor %}
-                            </ul>
-                        </li>
+            {% if "Size" in p %}
+                <p><strong>Size:</strong>
+                    L={{ p["Size"]["Length"] }},
+                    W={{ p["Size"]["Width"] }},
+                    H={{ p["Size"]["Height"] }}
+                </p>
+            {% endif %}
+
+            {% if "FolderData" in p %}
+                <p><strong>Folder:</strong> {{ p["FolderData"]["folder_name"] }}</p>
+                <ul>
+                    {% for subfolder, files in p["FolderData"]["files"].items() %}
+                    <li>
+                        <span class="folder" onclick="toggleFiles(this)">📁 {{ subfolder if subfolder else "[root]" }}</span>
+                        <ul class="files">
+                            {% for f in files %}
+                                <li>🖼️ {{ f }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
                     {% endfor %}
                 </ul>
             {% endif %}
         </div>
         {% endfor %}
     {% else %}
-        <p>No products received yet.</p>
+        <p>No products received yet. Try sending data from <code>app.py</code>.</p>
     {% endif %}
 
     <script>
-        function toggleFiles(element) {
-            const filesList = element.nextElementSibling;
-            filesList.classList.toggle("visible");
+        function toggleFiles(el) {
+            el.nextElementSibling.classList.toggle("visible");
         }
+
+        // Optional: auto-refresh every 5 seconds
+        setInterval(() => {
+            fetch('/products_json')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.length !== {{ products|length }}) {
+                        window.location.reload();
+                    }
+                });
+        }, 5000);
     </script>
 </body>
 </html>
