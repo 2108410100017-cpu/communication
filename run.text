@@ -1,0 +1,2 @@
+uvicorn app:app --reload
+uvicorn server:app --port 7000 --reload
