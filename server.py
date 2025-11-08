@@ -12,7 +12,7 @@ templates = Jinja2Templates(directory="templates")
 received_products = []
 
 HOST = "0.0.0.0"
-PORT = 5000
+PORT = 7000
 
 
 def recv_until_newline(conn):
@@ -110,4 +110,4 @@ async def products_json():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("server:app", host="0.0.0.0", port=7000, reload=True)
+    uvicorn.run("server:app", host="0.0.0.0", port=8500, reload=True)

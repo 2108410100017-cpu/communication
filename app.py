@@ -9,7 +9,7 @@ templates = Jinja2Templates(directory="templates")
 
 # TCP server configuration
 SERVER_IP = "192.168.1.201"
-SERVER_PORT = 5000
+SERVER_PORT = 7000
 
 MODEL_OPTIONS = ["Rodigo", "Douglous", "Andre"]
 BRAND_OPTIONS = ["LP", "VH"]
