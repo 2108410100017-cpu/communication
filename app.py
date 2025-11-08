@@ -9,7 +9,7 @@ templates = Jinja2Templates(directory="templates")
 
 # TCP server configuration
 SERVER_IP = "192.168.1.201"
-SERVER_PORT = 5000
+SERVER_PORT = 7000
 
 MODEL_OPTIONS = ["Rodigo", "Douglous", "Andre"]
 BRAND_OPTIONS = ["LP", "VH"]
@@ -100,9 +100,9 @@ async def send_form(
         response_data = response_buffer.strip()
         try:
             parsed_response = json.loads(response_data)
-            response_message = json.dumps(parsed_response, indent=4)
+            response_message = "✅ Message successfully sent!"
         except json.JSONDecodeError:
-            response_message = response_data
+            response_message = "✅ Message successfully sent!"
 
     except Exception as e:
         response_message = f"❌ Failed to send data: {e}"

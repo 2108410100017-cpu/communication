@@ -4,6 +4,7 @@ import json
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 
 app = FastAPI(title="Product Receiver via TCP Socket")
 templates = Jinja2Templates(directory="templates")
@@ -11,7 +12,7 @@ templates = Jinja2Templates(directory="templates")
 received_products = []
 
 HOST = "0.0.0.0"
-PORT = 5000
+PORT = 7000
 
 
 def recv_until_newline(conn):
@@ -85,14 +86,20 @@ def start_tcp_server():
 # Start TCP server in background thread
 threading.Thread(target=start_tcp_server, daemon=True).start()
 
+@app.get("/")
+async def home():
+    """Redirect to /products"""
+    return RedirectResponse(url="/products")
 
 @app.get("/products", response_class=HTMLResponse)
 async def view_products(request: Request):
     """HTML view to see all received products."""
-    return templates.TemplateResponse("products.html", {
-        "request": request,
-        "products": received_products
-    })
+    print(f"🔍 Rendering UI with {len(received_products)} products")
+    return templates.TemplateResponse(
+        "products.html",
+        {"request": request, "products": received_products}
+    )
+
 
 
 @app.get("/products_json")
@@ -103,4 +110,4 @@ async def products_json():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("server:app", host="0.0.0.0", port=8500, reload=True)
